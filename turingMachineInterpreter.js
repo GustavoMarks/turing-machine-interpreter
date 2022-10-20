@@ -1,3 +1,9 @@
+import readline from 'readline';
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout
+});
+
 class TMI {
 	constructor() {
 		this.fita = [' '];
@@ -6,8 +12,7 @@ class TMI {
 	}
 
 	// Tarefa 1
-	lerQuadrupla(linha = 0, quadString) {
-		// linha: iterador do arquivo
+	lerQuadrupla(quadString) {
 		// quadString: string no formato "qn,s,a,qn" onde:
 		// - qn é um estado de origem q de número n (ex: q0, q1, q2, etc)
 		// - s é um símbolo lido
@@ -15,23 +20,23 @@ class TMI {
 		// - qn é um estado de destino q de número n (ex: q0, q1, q2, etc)
 
 		const parts = String(quadString).split(',');
-		if (parts.length != 4) throw new Error(`Formato incorreto de Quadrupla: formato esperado de 4 argumentos. Linha ${linha}`);
+		if (parts.length != 4) throw new Error(`Formato incorreto de Quadrupla: formato esperado de 4 argumentos.`);
 
 		const estadoOrigem = parts[0];
 		const simbolo = parts[1];
 		const acao = parts[2];
 		const estadoDestino = parts[3];
 
-		const errorOrigemFormat = new Error(`Formato incorreto para estado de origem. Linha ${linha}`);
+		const errorOrigemFormat = new Error(`Formato incorreto para estado de origem.`);
 		if (String(estadoOrigem).length !== 2) throw errorOrigemFormat;
 		if (String(estadoOrigem)[0] !== 'q') throw errorOrigemFormat;
 		if (isNaN(String(estadoOrigem)[1])) throw errorOrigemFormat;
 
-		if (String(simbolo).length !== 1) throw new Error(`Formato incorreto para símbolo. Linha ${linha}`);
+		if (String(simbolo).length !== 1) throw new Error(`Formato incorreto para símbolo.`);
 
-		if (String(acao).length !== 1) throw new Error(`Formato incorreto para símbolo. Linha ${linha}`);
+		if (String(acao).length !== 1) throw new Error(`Formato incorreto para símbolo.`);
 
-		const errorDestinoFormat = new Error(`Formato incorreto para estado de destino. Linha ${linha}`);
+		const errorDestinoFormat = new Error(`Formato incorreto para estado de destino.`);
 		if (String(estadoDestino).length !== 2) throw errorDestinoFormat;
 		if (String(estadoDestino)[0] !== 'q') throw errorDestinoFormat;
 		if (isNaN(String(estadoDestino)[1])) throw errorDestinoFormat;
@@ -42,9 +47,95 @@ class TMI {
 	// Tarefa 2
 	inicializar(entrada) {
 		let novaFita = String(entrada).split(); // Trasformando a string em uma lista com cada posição sendo um caractere
-		novaFita.unshift(" "); // Colocando espaço em branco na primeira posição
+		novaFita.unshift(" "); 									// Colocando espaço em branco na primeira posição
 		this.fita = novaFita;
 	}
+
+	// Tarefa 3
+	deslocar_cabeca_direita() {
+		if (this.pos === this.fita.length - 1) {
+			this.fita.push(' ');
+			this.pos = this.pos + 1;
+		} else this.pos = this.pos + 1;
+	}
+
+	deslocar_cabeca_esquerda() {
+		if (this.pos === 0) this.fita.unshift(' ');
+		else this.pos = this.pos - 1;
+	}
+
+	escrever_caractere(char) {
+		this.fita[this.pos] = char;
+	}
+
+	// Tarefa 4
+	executar(quadString) {
+		const { acao, estadoDestino } = this.lerQuadrupla(quadString);
+		if (acao === '>') this.deslocar_cabeca_direita();
+		else if (acao === '<') this.deslocar_cabeca_direita();
+		else this.escrever_caractere(acao);
+		this.estadoAtual = estadoDestino;
+	}
+
+	// Tarefa 5
+	executarMT([...quadList], entradaString) {
+		this.inicializar(entradaString);
+		this.deslocar_cabeca_direita();
+
+		let findedQuad = quadList.find(item => {
+			const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
+			if (estadoOrigem === this.estadoAtual && simbolo === this.fita[this.pos]) return true
+			return false;
+		});
+
+		while (findedQuad) {
+			this.executar(findedQuad);
+			let findedQuad = quadList.find(item => {
+				const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
+				if (estadoOrigem === this.estadoAtual && simbolo === this.fita[this.pos]) return true
+				return false;
+			});
+		}
+
+		console.log(`Estado final: ${this.estadoAtual}`);
+		console.log(`Posição final do cabeçote: ${this.pos}`);
+		console.log("Conteúdo da fita");
+		console.table(quadList);
+	}
+
+	// Tarefa 6
+	async executarMTDebug([...quadList], entradaString) {
+		this.inicializar(entradaString);
+		this.deslocar_cabeca_direita();
+
+		let findedQuad = quadList.find(item => {
+			const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
+			if (estadoOrigem === this.estadoAtual && simbolo === this.fita[this.pos]) return true
+			return false;
+		});
+
+		const waitResponse = new Promise(res => rl.question('Digite enter para continuar: ', () => {
+			rl.close();
+			res();
+		}))
+
+		while (findedQuad) {
+			this.executar(findedQuad);
+			let findedQuad = quadList.find(item => {
+				const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
+				if (estadoOrigem === this.estadoAtual && simbolo === this.fita[this.pos]) return true
+				return false;
+			});
+
+			console.log(`Estado final: ${this.estadoAtual}`);
+			console.log(`Posição final do cabeçote: ${this.pos}`);
+			console.log("Conteúdo da fita");
+			console.table(quadList);
+
+			await waitResponse();
+		}
+	}
+
 }
 
-module.exports = TMI;
+export default TMI;
