@@ -30,18 +30,18 @@ class TMI {
 		const estadoDestino = parts[3];
 
 		const errorOrigemFormat = new Error(`Formato incorreto para estado de origem.`);
-		if (String(estadoOrigem).length !== 2) throw errorOrigemFormat;
+		// if (String(estadoOrigem).length !== 2) throw errorOrigemFormat;
 		if (String(estadoOrigem)[0] !== 'q') throw errorOrigemFormat;
-		if (isNaN(String(estadoOrigem)[1])) throw errorOrigemFormat;
+		// if (isNaN(String(estadoOrigem)[1])) throw errorOrigemFormat;
 
 		if (String(simbolo).length !== 1) throw new Error(`Formato incorreto para símbolo.`);
 
 		if (String(acao).length !== 1) throw new Error(`Formato incorreto para símbolo.`);
 
 		const errorDestinoFormat = new Error(`Formato incorreto para estado de destino.`);
-		if (String(estadoDestino).length !== 2) throw errorDestinoFormat;
+		// if (String(estadoDestino).length !== 2) throw errorDestinoFormat;
 		if (String(estadoDestino)[0] !== 'q') throw errorDestinoFormat;
-		if (isNaN(String(estadoDestino)[1])) throw errorDestinoFormat;
+		// if (isNaN(String(estadoDestino)[1])) throw errorDestinoFormat;
 
 		return { estadoOrigem, simbolo, acao, estadoDestino };
 	}
@@ -82,7 +82,7 @@ class TMI {
 	// Tarefa 5
 	executarMT([...quadList], entradaString) {
 		this.inicializar(entradaString);
-		this.deslocar_cabeca_direita();
+		// this.deslocar_cabeca_direita();
 
 		let findedQuad = quadList.find(item => {
 			const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
@@ -102,13 +102,13 @@ class TMI {
 		console.log(`Estado final: ${this.estadoAtual}`);
 		console.log(`Posição final do cabeçote: ${this.pos}`);
 		console.log("Conteúdo da fita");
-		console.table(quadList);
+		console.table(this.fita);
 	}
 
 	// Tarefa 6
 	async executarMTDebug([...quadList], entradaString) {
 		this.inicializar(entradaString);
-		this.deslocar_cabeca_direita();
+		// this.deslocar_cabeca_direita();
 
 		let findedQuad = quadList.find(item => {
 			const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
