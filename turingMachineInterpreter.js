@@ -1,4 +1,6 @@
-import readline from 'readline';
+const readline = require('readline');
+const fs = require('fs');
+
 const rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout
@@ -46,7 +48,7 @@ class TMI {
 
 	// Tarefa 2
 	inicializar(entrada) {
-		let novaFita = String(entrada).split(); // Trasformando a string em uma lista com cada posição sendo um caractere
+		let novaFita = [...entrada];
 		novaFita.unshift(" "); 									// Colocando espaço em branco na primeira posição
 		this.fita = novaFita;
 	}
@@ -72,7 +74,7 @@ class TMI {
 	executar(quadString) {
 		const { acao, estadoDestino } = this.lerQuadrupla(quadString);
 		if (acao === '>') this.deslocar_cabeca_direita();
-		else if (acao === '<') this.deslocar_cabeca_direita();
+		else if (acao === '<') this.deslocar_cabeca_esquerda();
 		else this.escrever_caractere(acao);
 		this.estadoAtual = estadoDestino;
 	}
@@ -90,7 +92,7 @@ class TMI {
 
 		while (findedQuad) {
 			this.executar(findedQuad);
-			let findedQuad = quadList.find(item => {
+			findedQuad = quadList.find(item => {
 				const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
 				if (estadoOrigem === this.estadoAtual && simbolo === this.fita[this.pos]) return true
 				return false;
@@ -114,28 +116,44 @@ class TMI {
 			return false;
 		});
 
-		const waitResponse = new Promise(res => rl.question('Digite enter para continuar: ', () => {
-			rl.close();
+		const waitResponse = () => new Promise(res => rl.question('Digite enter para continuar: ', () => {
 			res();
 		}))
 
 		while (findedQuad) {
 			this.executar(findedQuad);
-			let findedQuad = quadList.find(item => {
+			findedQuad = quadList.find(item => {
 				const { estadoOrigem, simbolo } = this.lerQuadrupla(item);
 				if (estadoOrigem === this.estadoAtual && simbolo === this.fita[this.pos]) return true
 				return false;
 			});
 
-			console.log(`Estado final: ${this.estadoAtual}`);
-			console.log(`Posição final do cabeçote: ${this.pos}`);
-			console.log("Conteúdo da fita");
-			console.table(quadList);
+			console.log(`Estado atual: ${this.estadoAtual}`);
+			console.log(`Posição atual do cabeçote: ${this.pos}`);
+			console.log("Conteúdo da fita:");
+			console.table(this.fita);
 
 			await waitResponse();
 		}
+
+		rl.close();
+	}
+
+	// Tarefa 7
+	async executarMTArq(pathQuadsString, pathEntradaString, debug = false) {
+		fs.readFile(pathQuadsString, 'utf8', (err, arqQuadsData) => {
+			if (err) throw new Error("Falha ao tentar ler o arquivo de quádruplas");
+			const quadList = arqQuadsData.split('\n');
+
+			fs.readFile(pathEntradaString, 'utf8', (err, entradaString) => {
+				if (err) throw new Error("Falha ao tentar ler o arquivo de entrada");
+
+				if (debug) return this.executarMTDebug(quadList, entradaString);
+				return this.executarMT(quadList, entradaString);
+			});
+		});
 	}
 
 }
 
-export default TMI;
+module.exports = TMI
