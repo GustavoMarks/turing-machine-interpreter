@@ -1,6 +1,7 @@
 const readline = require('readline');
 const fs = require('fs');
 
+// Configurações para input do usuário no terminal:
 const rl = readline.createInterface({
 	input: process.stdin,
 	output: process.stdout
@@ -8,6 +9,7 @@ const rl = readline.createInterface({
 
 class TMI {
 	constructor() {
+		// Configurações iniciais do objeto (Turing Machine Interpreter):
 		this.fita = [' '];
 		this.pos = 0;
 		this.estadoAtual = 'q0';
@@ -21,7 +23,7 @@ class TMI {
 		// - a é a ação, sendo > e < direções de deslocamento
 		// - qn é um estado de destino q de número n (ex: q0, q1, q2, etc)
 
-		const parts = String(quadString).split(',');
+		const parts = String(quadString).split(',');	// Dividindo entrada em 4 argumento quebrando a string no ','
 		if (parts.length != 4) throw new Error(`Formato incorreto de Quadrupla: formato esperado de 4 argumentos.`);
 
 		const estadoOrigem = parts[0];

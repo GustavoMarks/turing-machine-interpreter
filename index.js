@@ -1,4 +1,7 @@
 const TMI = require('./turingMachineInterpreter');
 
+const nomeArquivoMaquina = 'copy.tm';
+const nomeArquivoEntrada = 'entrada.txt';
+
 const tmi = new TMI();
-tmi.executarMTArq('sucessor.tm', 'entradaBin.txt');
+tmi.executarMTArq(nomeArquivoMaquina, nomeArquivoEntrada);
