@@ -17,7 +17,7 @@ Parte I de Trabalho desenvolvido na Disciplina de Teoria da Computação
 
 - turingMachineInterpreter.js: arquivo contendo definições de classe e funções
 - entrada.txt: arquivo para escrita de string que será usada em uma máquina {a,b}.
-- entradaBin.txt: arquivo para escrita de uma string em bináio que será testada em uma máquina.
+- entradaBin.txt: arquivo para escrita de uma string em binário que será testada em uma máquina.
 - copy.tm: definição de máquina para cópia de string {a,b}
 - inverter.tm: definição de máquina para inverter uma string {a,b}
 - shift.tm: definição de máquina SHIFT-R {a,b}
